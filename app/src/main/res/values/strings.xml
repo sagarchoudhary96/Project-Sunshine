@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Sunshine</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <!-- Actiom map title -->
+    <string name="action_map">Map Location</string>
+    <string name="action_refresh" translatable="false">Refresh</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_location_label">Location</string>
+    <string name="pref_location_key" translatable="false">location</string>
+    <string name="pref_location_default" translatable="false">140401</string>
+
+    <!--Labels for temperature settings-->
+    <string name="pref_unit_label">Temperature Units</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_unit_label_Imperial">Imperial</string>
+
+    <!-- key name for temperature unit prefrence-->
+    <string name="pref_units_key" translatable="false">units</string>
+    <!--values in shared prefrences-->
+    <string name="pref_units_metric" translatable="false">metric</string>
+    <string name="pref_units_imperial" translatable="false">imperial</string>
+
+    <string-array name="pref_units_options">
+        <item>@string/pref_units_label_metric</item>
+        <item>@string/pref_unit_label_Imperial</item>
+    </string-array>
+    <string-array name="pref_unit_values">
+        <item>@string/pref_units_metric</item>
+        <item>@string/pref_units_imperial</item>
+    </string-array>
+
+    <string name="action_share">Share</string>
+</resources>
