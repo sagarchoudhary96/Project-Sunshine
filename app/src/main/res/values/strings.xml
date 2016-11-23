@@ -4,11 +4,13 @@
     <string name="app_name">Sunshine</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <!-- Actiom map title -->
+    <!-- Action map title -->
     <string name="action_map">Map Location</string>
     <string name="action_refresh" translatable="false">Refresh</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Settings</string>
+
+    <!--Location preference-->
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_default" translatable="false">140401</string>
@@ -18,9 +20,9 @@
     <string name="pref_units_label_metric">Metric</string>
     <string name="pref_unit_label_Imperial">Imperial</string>
 
-    <!-- key name for temperature unit prefrence-->
+    <!-- key name for temperature unit preference-->
     <string name="pref_units_key" translatable="false">units</string>
-    <!--values in shared prefrences-->
+    <!--values in shared preferences-->
     <string name="pref_units_metric" translatable="false">metric</string>
     <string name="pref_units_imperial" translatable="false">imperial</string>
 
