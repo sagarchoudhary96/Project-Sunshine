@@ -3,57 +3,57 @@
 
     <item
         is-multidex="true"
-        jar="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\jars\libs\internal_impl-21.0.2.jar"
+        jar="/home/sagar/.android/build-cache/31644ec3359ad36b07e6bd33add4f331337825ba/output/jars/classes.jar"
         jumboMode="true"
         optimize="true"
-        revision="21.1.2"
-        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-21.0.2_7e2b9d15b995aee833c934f0168305680f9b1f9c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.2\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
+        revision="25.0.0"
         sha1="7ae2d38807a43b2f2185ff4089a92c790b579e54">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-21.0.2_620698387370dedaf68e0da0b1ba9ab28d48a3a9\classes.dex" />
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_72f6d788c8039705aa3a8ac78e5a231e3a00f85d/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\admin\AppData\Local\Android\sdk1\extras\android\m2repository\com\android\support\support-annotations\21.0.2\support-annotations-21.0.2.jar"
+        jar="/home/sagar/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.2/support-annotations-21.0.2.jar"
         jumboMode="true"
         optimize="true"
-        revision="21.1.2"
+        revision="25.0.0"
         sha1="99373741f99a0556ee293c41e8faa1ca3ae8a4e6">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-21.0.2_c71a72df05d3aec888a17aad56b5b8642dd22f67\classes.dex" />
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-21.0.2_064740afb05891f9850f114b750f693d4f716bd8/classes.dex" />
     </item>
     <item
         is-multidex="true"
-        jar="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jar="/home/sagar/.android/build-cache/bbc16ff91eaad9a4bbe1d3b0fd123d0b50df0bd7/output/jars/classes.jar"
         jumboMode="true"
         optimize="true"
-        revision="21.1.2"
-        sha1="b70d56895680f550303efd55965ebd74c11e2887">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_45b87130d97d0ab6bbf98ebdf46420cf55b75506\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="0a5c47c672021be9170b67ece52d11364a3956ce">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_057589759a7d8f02a87fbacb71d44d6893550f50\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.2\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
+        revision="25.0.0"
         sha1="d1bf02de1c56d942e7a9d093b8610ba1ef4128e3">
-        <dex dex="F:\PERSONAL\Udacity\Android Developer Nanodegree\level1\Project-Sunshine\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-21.0.2_0409edfcb44264479db674cdd1651950cfef1b8a\classes.dex" />
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_448c08ae88de2eb9c2e4e7c0ef4d44e164f88f6d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/sagar/.android/build-cache/bbc16ff91eaad9a4bbe1d3b0fd123d0b50df0bd7/output/jars/libs/internal_impl-21.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="962e8b12569c56dbdcf8367eb4eac8bb129cd18f">
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-21.0.2_5c95735ca2382dc78eccba8ae4e0ef3157e8a8c5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="51aa4a45341fde38591072a3d60404b54b06dfaf">
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_9d3c79cae5c91bf798753d7ada7aad4020985056/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
+        <dex dex="/media/sagar/LOCAL DISK/PERSONAL/Udacity/Android Developer Nanodegree/level1/Project-Sunshine/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_34148e4b193bc54ba8240cebcf73fed4993d7e0f/classes.dex" />
     </item>
 
 </items>
