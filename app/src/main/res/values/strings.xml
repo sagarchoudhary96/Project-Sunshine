@@ -24,6 +24,7 @@
     <!--or something similar.-->
     <string name="app_name">Sunshine</string>
     <string name="refresh">Refresh</string>
+    <string name="error_msg">Error fetching data!</string>
 
 
     <!-- - - - - - - - - - - - - -->

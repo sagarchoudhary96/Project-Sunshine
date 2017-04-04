@@ -7,5 +7,5 @@
         android:title="@string/refresh"
         android:id="@+id/action_refresh"
         android:orderInCategory="1"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 </menu>
