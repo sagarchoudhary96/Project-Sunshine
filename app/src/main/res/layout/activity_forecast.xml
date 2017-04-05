@@ -19,17 +19,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerview">
 
-        <TextView
-            android:id="@+id/tv_weather_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textSize="20sp" />
-    </ScrollView>
+    </android.support.v7.widget.RecyclerView>
 
     <TextView
         android:id="@+id/errorDisplay"
