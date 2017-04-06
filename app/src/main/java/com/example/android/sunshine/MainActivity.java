@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
@@ -34,7 +35,7 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler{
 
 
     private RecyclerView mRecyclerView;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
+
+    private Toast mToastmsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // new ForecastAdapter
-        mFrocastAdapter = new ForecastAdapter();
+        mFrocastAdapter = new ForecastAdapter(this);
 
         //  set mRecyclerView adapter to mForecastAdapter
         mRecyclerView.setAdapter(mFrocastAdapter);
@@ -125,6 +128,15 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setVisibility(View.INVISIBLE);
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void OnItemClick(String dayWeather) {
+        if (mToastmsg != null) {
+            mToastmsg.cancel();
+        }
+
+        mToastmsg.makeText(this, dayWeather, Toast.LENGTH_SHORT).show();
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
