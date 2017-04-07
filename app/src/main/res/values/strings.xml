@@ -25,6 +25,8 @@
     <string name="app_name">Sunshine</string>
     <string name="refresh">Refresh</string>
     <string name="error_msg">Error fetching data!</string>
+    <!--Used in overflow menu to open location in map-->
+    <string name="action_map">Open In Map</string>
 
 
     <!-- - - - - - - - - - - - - -->

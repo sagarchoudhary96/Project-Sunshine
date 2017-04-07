@@ -1,8 +1,11 @@
 package com.example.android.sunshine;
 
 import android.content.Intent;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class DetailActivity extends AppCompatActivity {
@@ -26,5 +29,22 @@ public class DetailActivity extends AppCompatActivity {
                 mWeatherDisplay.setText(mForecast);
             }
         }
+    }
+
+    private Intent createShareIntent() {
+        Intent shareForecastIntent = ShareCompat.IntentBuilder.from(this)
+                .setType("text/plain")
+                .setText(FORECAST_SHARE_HASHTAG + mForecast)
+                .getIntent();
+
+        return shareForecastIntent;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail, menu);
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        shareItem.setIntent(createShareIntent());
+        return true;
     }
 }

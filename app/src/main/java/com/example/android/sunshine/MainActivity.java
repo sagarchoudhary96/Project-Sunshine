@@ -16,11 +16,13 @@
 package com.example.android.sunshine;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,6 +40,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler{
 
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private ForecastAdapter mFrocastAdapter;
@@ -203,7 +206,32 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             loadWeatherData();
             return true;
         }
+        else if (id == R.id.action_map) {
+            showMap();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showMap() {
+
+        String address = "1600 Amphitheatre Parkway, CA";
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("geo")
+                .path("0,0")
+                .query(address);
+
+        Uri addressUri = builder.build();
+
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
+        mapIntent.setData(addressUri);
+
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        } else {
+            Log.d(TAG, "Couldn't call " + addressUri.toString()
+                    + ", no receiving apps installed!");
+        }
     }
 }
