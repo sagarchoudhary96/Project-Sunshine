@@ -15,10 +15,14 @@
  */
 package com.example.android.sunshine;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +33,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
@@ -38,18 +41,22 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler{
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    /*
+    * This number will uniquely identify our Loader and is chosen arbitrarily. You can change this
+    * to any number you like, as long as you use the same variable name.
+    */
+    private static final int WEATHER_SEARCH_LOADER = 1;
+
     private RecyclerView mRecyclerView;
-    private ForecastAdapter mFrocastAdapter;
+    private ForecastAdapter mForecastAdapter;
 
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
-
-    private Toast mToastmsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +85,10 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         mRecyclerView.setHasFixedSize(true);
 
         // new ForecastAdapter
-        mFrocastAdapter = new ForecastAdapter(this);
+        mForecastAdapter = new ForecastAdapter(this);
 
         //  set mRecyclerView adapter to mForecastAdapter
-        mRecyclerView.setAdapter(mFrocastAdapter);
+        mRecyclerView.setAdapter(mForecastAdapter);
         /*
          * The ProgressBar that will indicate to the user that we are loading data. It will be
          * hidden when no data is loading.
@@ -91,19 +98,86 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.progressDisplay);
 
-        /* Once all of our views are setup, we can load the weather data. */
-        loadWeatherData();
+        Bundle bundle = new Bundle();
+
+        getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, bundle, MainActivity.this);
+    }
+
+
+    @Override
+    public Loader<String[]> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<String[]>(this) {
+
+            String[] mWeatherData = null;
+
+
+            @Override
+            protected void onStartLoading() {
+                if (mWeatherData != null) {
+                    deliverResult(mWeatherData);
+                }
+                else {
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public String[] loadInBackground() {
+                String location = SunshinePreferences.getPreferredWeatherLocation(MainActivity.this);
+                URL weatherRequestUrl = NetworkUtils.buildUrl(location);
+
+                try {
+                    String jsonWeatherResponse = NetworkUtils
+                            .getResponseFromHttpUrl(weatherRequestUrl);
+
+                    return OpenWeatherJsonUtils
+                            .getSimpleWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+            }
+
+            @Override
+            public void deliverResult(String[] data) {
+                mWeatherData = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String[]> loader, String[] weatherData) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        if (weatherData != null) {
+            showWeatherDataView();
+            mForecastAdapter.setWeatherData(weatherData);
+        } else {
+            showErrorMessage();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<String[]> loader) {
+
     }
 
     /**
-     * This method will get the user's preferred location for weather, and then tell some
-     * background method to get the weather data in the background.
+     * This method is overridden by our MainActivity class in order to handle RecyclerView item
+     * clicks.
+     *
+     * @param weatherForDay The weather for the day that was clicked
      */
-    private void loadWeatherData() {
-        showWeatherDataView();
-
-        String location = SunshinePreferences.getPreferredWeatherLocation(this);
-        new FetchWeatherTask().execute(location);
+    @Override
+    public void OnItemClick(String weatherForDay) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
+        startActivity(intentToStartDetailActivity);
     }
 
     /**
@@ -133,57 +207,28 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
+    /**
+     * This method uses the URI scheme for showing a location found on a
+     * map. This super-handy intent is detailed in the "Common Intents"
+     * page of Android's developer site:
+     *
+     * @see "http://developer.android.com/guide/components/intents-common.html#Maps"
+     *
+     * Hint: Hold Command on Mac or Control on Windows and click that link
+     * to automagically open the Common Intents page
+     */
+    private void openLocationInMap() {
+        String addressString = "1600 Ampitheatre Parkway, CA";
+        Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
-    @Override
-    public void OnItemClick(String dayWeather) {
-        Intent startDetailActivity = new Intent(this, DetailActivity.class);
-        startDetailActivity.putExtra(Intent.EXTRA_TEXT, dayWeather);
-        startActivity(startDetailActivity);
-    }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String[] doInBackground(String... params) {
-
-            /* If there's no zip code, there's nothing to look up. */
-            if (params.length == 0) {
-                return null;
-            }
-
-            String location = params[0];
-            URL weatherRequestUrl = NetworkUtils.buildUrl(location);
-
-            try {
-                String jsonWeatherResponse = NetworkUtils
-                        .getResponseFromHttpUrl(weatherRequestUrl);
-
-                String[] simpleJsonWeatherData = OpenWeatherJsonUtils
-                        .getSimpleWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
-
-                return simpleJsonWeatherData;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String[] weatherData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (weatherData != null) {
-                showWeatherDataView();
-                mFrocastAdapter.setWeatherData(weatherData);
-            } else {
-                showErrorMessage();
-            }
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Log.d(TAG, "Couldn't call " + geoLocation.toString()
+                    + ", no receiving apps installed!");
         }
     }
 
@@ -202,36 +247,16 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            mFrocastAdapter.setWeatherData(null);
-            loadWeatherData();
+            mForecastAdapter.setWeatherData(null);
+            getSupportLoaderManager().restartLoader(WEATHER_SEARCH_LOADER, null, this);
             return true;
         }
-        else if (id == R.id.action_map) {
-            showMap();
+
+        if (id == R.id.action_map) {
+            openLocationInMap();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showMap() {
-
-        String address = "1600 Amphitheatre Parkway, CA";
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("geo")
-                .path("0,0")
-                .query(address);
-
-        Uri addressUri = builder.build();
-
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-        mapIntent.setData(addressUri);
-
-        if (mapIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(mapIntent);
-        } else {
-            Log.d(TAG, "Couldn't call " + addressUri.toString()
-                    + ", no receiving apps installed!");
-        }
     }
 }
