@@ -33,6 +33,8 @@
     <!--Used by SunshineDateUtils-->
     <!-- - - - - - - - - - - - - -->
 
+    <string name="action_settings">Settings</string>
+
     <!-- For labelling today's forecast [CHAR LIMIT=15] -->
     <string name="today">Today</string>
 

@@ -18,7 +18,6 @@ package com.example.android.sunshine;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -37,7 +36,6 @@ import android.widget.TextView;
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
-
 
 import java.net.URL;
 
@@ -256,6 +254,13 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             openLocationInMap();
             return true;
         }
+
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

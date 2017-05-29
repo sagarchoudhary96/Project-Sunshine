@@ -11,4 +11,10 @@
         android:title="Share"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="1"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
 </menu>
