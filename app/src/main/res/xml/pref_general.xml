@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:defaultValue="Mountain View, CA 94043"
+        android:defaultValue="@string/pref_location_default"
         android:key="location"
         android:inputType="text"
         android:singleLine="true"

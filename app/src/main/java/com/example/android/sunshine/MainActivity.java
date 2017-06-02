@@ -17,6 +17,7 @@ package com.example.android.sunshine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -39,7 +40,9 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>{
+import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
+
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>, SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
+
+    private static boolean PREFS_UPDATED = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         Bundle bundle = new Bundle();
 
         getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, bundle, MainActivity.this);
+
+        getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -123,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             @Override
             public String[] loadInBackground() {
                 String location = SunshinePreferences.getPreferredWeatherLocation(MainActivity.this);
+                Log.v("loc:", location);
                 URL weatherRequestUrl = NetworkUtils.buildUrl(location);
 
                 try {
@@ -216,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
      * to automagically open the Common Intents page
      */
     private void openLocationInMap() {
-        String addressString = "1600 Ampitheatre Parkway, CA";
+        String addressString = SunshinePreferences.getPreferredWeatherLocation(this);
         Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -228,6 +236,23 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
             Log.d(TAG, "Couldn't call " + geoLocation.toString()
                     + ", no receiving apps installed!");
         }
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PREFS_UPDATED) {
+            getSupportLoaderManager().restartLoader(WEATHER_SEARCH_LOADER, null, this);
+            PREFS_UPDATED = false;
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -263,5 +288,10 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        PREFS_UPDATED = true;
     }
 }
