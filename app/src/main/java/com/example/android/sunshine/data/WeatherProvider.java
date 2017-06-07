@@ -9,7 +9,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import static com.example.android.sunshine.data.WeatherContract.*;
+import com.example.android.sunshine.utilities.SunshineDateUtils;
+
+import static com.example.android.sunshine.data.WeatherContract.CONTENT_AUTHORITY;
+import static com.example.android.sunshine.data.WeatherContract.PATH_WEATHER;
+import static com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 /**
  * Created by sagar on 7/6/17.
@@ -39,6 +43,42 @@ public class WeatherProvider extends ContentProvider {
         return true;
     }
 
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case CODE_WEATHER:
+                db.beginTransaction();
+                int rowsInserted = 0;
+                try {
+                    for(ContentValues value : values) {
+                        long weatherDate = value.getAsLong(WeatherEntry.COLUMN_DATE);
+                        if(!SunshineDateUtils.isDateNormalized(weatherDate)) {
+                            throw new IllegalArgumentException("Date must be normalized");
+                        }
+
+                        long _id = db.insert(WeatherEntry.TABLE_NAME, null, value);
+                        if (_id!=-1) {
+                            rowsInserted++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+
+                return rowsInserted;
+            default:
+                return super.bulkInsert(uri, values);
+
+        }
+    }
+
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
@@ -57,11 +97,17 @@ public class WeatherProvider extends ContentProvider {
                         sortOrder);
                 break;
             case CODE_WEATHER_WITH_DATE:
-                String id = uri.getPathSegments().get(1);
-                result = db.query(WeatherEntry.TABLE_NAME,
+
+                String normalizedUtcDateString = uri.getLastPathSegment();
+
+                String[] selectionArguments = new String[]{normalizedUtcDateString};
+
+                result = mOpenHelper.getReadableDatabase().query(
+        /* Table we are going to query */
+                        WeatherContract.WeatherEntry.TABLE_NAME,
                         projection,
-                        "_id?",
-                        new String[] {id},
+                        WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ",
+                        selectionArguments,
                         null,
                         null,
                         sortOrder);
