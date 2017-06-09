@@ -17,11 +17,11 @@ package com.example.android.sunshine;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,14 +35,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.android.sunshine.data.SunshinePreferences;
-import com.example.android.sunshine.utilities.NetworkUtils;
-import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+import com.example.android.sunshine.data.WeatherContract;
+import com.example.android.sunshine.utilities.FakeDataUtils;
 
-import java.net.URL;
-
-import static android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences;
-
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<String[]>, SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -50,11 +46,26 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     * This number will uniquely identify our Loader and is chosen arbitrarily. You can change this
     * to any number you like, as long as you use the same variable name.
     */
+
     private static final int WEATHER_SEARCH_LOADER = 1;
+
+
+    public static final String[] MAIN_FORECAST_PROJECTION = {
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+    };
+
+    public static final int INDEX_WEATHER_DATE = 0;
+    public static final int INDEX_WEATHER_MAX_TEMP = 1;
+    public static final int INDEX_WEATHER_MIN_TEMP = 2;
+    public static final int INDEX_WEATHER_CONDITION_ID = 3;
+
 
     private RecyclerView mRecyclerView;
     private ForecastAdapter mForecastAdapter;
-
+    private int mPosition = RecyclerView.NO_POSITION;
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
@@ -65,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
+        FakeDataUtils.insertFakeData(this);
 
         /*
          * Using findViewById, we get a reference to our RecyclerView from xml.
@@ -88,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         mRecyclerView.setHasFixedSize(true);
 
         // new ForecastAdapter
-        mForecastAdapter = new ForecastAdapter(this);
+        mForecastAdapter = new ForecastAdapter(this, this);
 
         //  set mRecyclerView adapter to mForecastAdapter
         mRecyclerView.setAdapter(mForecastAdapter);
@@ -103,72 +115,52 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
         Bundle bundle = new Bundle();
 
-        getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, bundle, MainActivity.this);
+        getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, null, MainActivity.this);
 
-        getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
 
     @Override
-    public Loader<String[]> onCreateLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<String[]>(this) {
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
 
-            String[] mWeatherData = null;
+//          COMPLETED (22) If the loader requested is our forecast loader, return the appropriate CursorLoader
+            case WEATHER_SEARCH_LOADER:
+                /* URI for all rows of weather data in our weather table */
+                Uri forecastQueryUri = WeatherContract.WeatherEntry.CONTENT_URI;
+                /* Sort order: Ascending by date */
+                String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+                /*
+                 * A SELECTION in SQL declares which rows you'd like to return. In our case, we
+                 * want all weather data from today onwards that is stored in our weather table.
+                 * We created a handy method to do that in our WeatherEntry class.
+                 */
+                String selection = WeatherContract.WeatherEntry.getSqlSelectForTodayOnwards();
 
+                return new CursorLoader(this,
+                        forecastQueryUri,
+                        MAIN_FORECAST_PROJECTION,
+                        selection,
+                        null,
+                        sortOrder);
 
-            @Override
-            protected void onStartLoading() {
-                if (mWeatherData != null) {
-                    deliverResult(mWeatherData);
-                }
-                else {
-                    mLoadingIndicator.setVisibility(View.VISIBLE);
-                    forceLoad();
-                }
-            }
-
-            @Override
-            public String[] loadInBackground() {
-                String location = SunshinePreferences.getPreferredWeatherLocation(MainActivity.this);
-                Log.v("loc:", location);
-                URL weatherRequestUrl = NetworkUtils.buildUrl(location);
-
-                try {
-                    String jsonWeatherResponse = NetworkUtils
-                            .getResponseFromHttpUrl(weatherRequestUrl);
-
-                    return OpenWeatherJsonUtils
-                            .getSimpleWeatherStringsFromJson(MainActivity.this, jsonWeatherResponse);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
-
-            }
-
-            @Override
-            public void deliverResult(String[] data) {
-                mWeatherData = data;
-                super.deliverResult(data);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<String[]> loader, String[] weatherData) {
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        if (weatherData != null) {
-            showWeatherDataView();
-            mForecastAdapter.setWeatherData(weatherData);
-        } else {
-            showErrorMessage();
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<String[]> loader) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor weatherData) {
+        mForecastAdapter.swapCursor(weatherData);
+        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
+        mRecyclerView.smoothScrollToPosition(mPosition);
+        if (weatherData.getCount() != 0)
+            showWeatherDataView();
+    }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapter.swapCursor(null);
     }
 
     /**
@@ -252,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -270,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            mForecastAdapter.setWeatherData(null);
+            mForecastAdapter.swapCursor(null);
             getSupportLoaderManager().restartLoader(WEATHER_SEARCH_LOADER, null, this);
             return true;
         }
@@ -288,10 +279,5 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        PREFS_UPDATED = true;
     }
 }
