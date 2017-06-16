@@ -15,7 +15,6 @@
  */
 package com.example.android.sunshine;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -112,8 +111,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
          * circle. We didn't make the rules (or the names of Views), we just follow them.
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.progressDisplay);
-
-        Bundle bundle = new Bundle();
+        showLoading();
 
         getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, null, MainActivity.this);
 
@@ -163,30 +161,19 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         mForecastAdapter.swapCursor(null);
     }
 
-    /**
-     * This method is overridden by our MainActivity class in order to handle RecyclerView item
-     * clicks.
-     *
-     * @param weatherForDay The weather for the day that was clicked
-     */
+
     @Override
-    public void OnItemClick(String weatherForDay) {
-        Context context = this;
-        Class destinationClass = DetailActivity.class;
-        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, weatherForDay);
-        startActivity(intentToStartDetailActivity);
+    public void OnItemClick(long date) {
+        Intent weatherIntent = new Intent(MainActivity.this, DetailActivity.class);
+        Uri uriDate = WeatherContract.WeatherEntry.buildWeatherUriWithDate(date);
+        weatherIntent.setData(uriDate);
+        startActivity(weatherIntent);
     }
 
-    /**
-     * This method will make the View for the weather data visible and
-     * hide the error message.
-     * <p>
-     * Since it is okay to redundantly set the visibility of a View, we don't
-     * need to check whether each view is currently visible or invisible.
-     */
+
     private void showWeatherDataView() {
         /* First, make sure the error is invisible */
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -199,9 +186,17 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
      * Since it is okay to redundantly set the visibility of a View, we don't
      * need to check whether each view is currently visible or invisible.
      */
+    private void showLoading() {
+        /* Then, hide the weather data */
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        /* Finally, show the loading indicator */
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
     private void showErrorMessage() {
         /* First, hide the currently visible data */
         mRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }

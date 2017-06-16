@@ -1,15 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
     tools:context="com.example.android.sunshine.DetailActivity">
 
     <TextView
+        android:id="@+id/date"
+        style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:id="@+id/tv_display_weather" />
+        tools:text="Saturday, September 24"/>
 
-</FrameLayout>
+    <!-- Text that describes weather condition -->
+    <TextView
+        android:id="@+id/weather_description"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Rainy"/>
+
+    <TextView
+        android:id="@+id/high_temperature"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="19\u00b0"/>
+
+    <!-- Low temperature for today -->
+    <TextView
+        android:id="@+id/low_temperature"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="10\u00b0"/>
+    <TextView
+        android:id="@+id/humidity"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="38%"/>
+
+    <!-- Pressure  -->
+    <TextView
+        android:id="@+id/pressure"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="995 hPa"/>
+
+    <!-- Wind  -->
+    <TextView
+        android:id="@+id/wind"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="4km/h NW"/>
+
+
+</LinearLayout>
