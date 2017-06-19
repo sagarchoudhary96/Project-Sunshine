@@ -35,7 +35,7 @@ import android.widget.TextView;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
-import com.example.android.sunshine.utilities.FakeDataUtils;
+import com.example.android.sunshine.sync.SunshineSyncUtils;
 
 public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -75,8 +75,6 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
-        FakeDataUtils.insertFakeData(this);
-
         /*
          * Using findViewById, we get a reference to our RecyclerView from xml.
          */
@@ -115,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
         getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, null, MainActivity.this);
 
+        SunshineSyncUtils.startImmediateSync(this);
     }
 
 
