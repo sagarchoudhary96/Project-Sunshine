@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
         getSupportLoaderManager().initLoader(WEATHER_SEARCH_LOADER, null, MainActivity.this);
 
-        SunshineSyncUtils.startImmediateSync(this);
+        SunshineSyncUtils.initialize(this);
     }
 
 
